@@ -6,26 +6,13 @@
 <h2>Directory</h2>
 
   <p>{{ directory }}</p>
-{#    <ul>#}
-{#    {% for listing in json_dir %}#}
-{#        <li>#}
-{#        {{ listing }}#}
-{#        </li>#}
-{#    {% endfor %}#}
-{#    </ul>#}
-    <div id="container"></div>
-    <script>
-        var directory = JSON.parse('{{ json_dir | tojson | safe}}');
-        $(function() {
-            $('#container').jstree({
-                'core' : {
-                    'data' : [
-                        directory
-                        ]
-                }
-            });
-        });
-    </script>
+    <ul>
+    {% for listing in dir_listing %}
+        <li>
+        {{ listing }}
+        </li>
+    {% endfor %}
+    </ul>
   <p><a href="/">Back to home</a></p>
 
 {% endblock %}
