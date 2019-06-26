@@ -4,15 +4,21 @@
 {% block content %}
 
 <h2>Directory</h2>
-
-  <p>{{ directory }}</p>
-    <ul>
-    {% for listing in dir_listing %}
-        <li>
-        {{ listing }}
-        </li>
-    {% endfor %}
-    </ul>
+    <div id="dir_tree"></div>
+    <script>
+    $('#dir_tree').jstree({ 'core' : {
+    'data' : [
+        {{ dir_listing|tojson }}
+    ]
+} });
+    </script>
+{#    <ul>#}
+{#    {% for listing in dir_listing %}#}
+{#        <li>#}
+{#        {{ listing }}#}
+{#        </li>#}
+{#    {% endfor %}#}
+{#    </ul>#}
   <p><a href="/">Back to home</a></p>
 
 {% endblock %}

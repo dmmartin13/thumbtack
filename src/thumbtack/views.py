@@ -1,9 +1,9 @@
 import imagemounter.exceptions
 import os
 from flask import Blueprint, current_app, redirect, render_template, request
-import time
 
-from .utils import get_supported_libraries, get_images, mount_image, unmount_image, get_ref_count
+
+from .utils import get_supported_libraries, get_images, mount_image, unmount_image, get_ref_count, path_to_dict
 from .exceptions import UnexpectedDiskError, NoMountableVolumesError
 
 main = Blueprint('', __name__)
@@ -81,37 +81,6 @@ def mount_form():
 def browse_volume():
     dir = request.form['mount_path']
     directory = os.path.abspath(dir)
-    dir_listing = []
-    for root, dirs, files in os.walk(dir):
-        for name in files:
-            dir_entry = []
-            mnt_path = '/' + os.path.relpath(os.path.join(root, name), dir)
-            dir_entry.append(mnt_path)
-            try:
-                stats = os.stat(os.path.join(root, name))
-                dir_entry.append(stats.st_uid)
-                dir_entry.append(stats.st_gid)
-                dir_entry.append(stats.st_size)
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_ctime)))
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_mtime)))
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_atime)))
-            except:
-                pass
-            dir_listing.append(dir_entry)
-        for name in dirs:
-            dir_entry = []
-            mnt_path = '/' + os.path.relpath(os.path.join(root, name), dir)
-            dir_entry.append(mnt_path)
-            try:
-                stats = os.stat(os.path.join(root, name))
-                dir_entry.append(stats.st_uid)
-                dir_entry.append(stats.st_gid)
-                dir_entry.append(stats.st_size)
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_ctime)))
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_mtime)))
-                dir_entry.append(time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_atime)))
-            except:
-                pass
-            dir_listing.append(dir_entry)
+    dir_listing = path_to_dict(directory)
     return render_template('browse.html',
                            directory=directory, dir_listing=dir_listing)

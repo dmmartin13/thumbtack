@@ -4,6 +4,7 @@ import re
 import sqlite3
 import subprocess
 import sys
+import time
 
 from pathlib import Path
 
@@ -441,3 +442,22 @@ def check_ignored(full_path):
         return True
 
     return False
+
+def path_to_dict(path):
+    stats = os.stat(path)
+    ctime = time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_ctime))
+    mtime = time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_mtime))
+    atime = time.strftime("%Y-%m-%dT%H:%M:%S %Z", time.localtime(stats.st_atime))
+    d = {'text': os.path.basename(path) + " --- ctime: " + \
+        ctime + " ---  mtime: " + \
+        mtime + " --- atime: " + \
+        atime + " --- size: " + \
+        str(stats.st_size)
+         }
+    d['li_attr'] = stats.st_size
+    if os.path.isdir(path):
+        d['type'] = "directory"
+        d['children'] = [path_to_dict(os.path.join(path,x)) for x in os.listdir(path)]
+    else:
+        d['type'] = "file"
+    return d
